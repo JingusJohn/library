@@ -6,6 +6,7 @@
 
   let title: string = "";
   let author: string = "";
+  let description: string = ""
   let message: string = "";
 
 
@@ -17,7 +18,8 @@
         bookCreated: true,
         bookData: {
           title: title,
-          author: author
+          author: author,
+          description: description
         }
       })
     }
@@ -46,7 +48,13 @@
     <input bind:value={author}>
   </label>
 
-  <button disabled='{!validStringAnswers([title, author])}' on:click={submit}>Create</button>
+  <label>
+    Description
+    <input bind:value={description}>
+  </label>
+
+
+  <button disabled='{!validStringAnswers([title, author, description])}' on:click={submit}>Create</button>
 
   <p>{message}</p>
 
