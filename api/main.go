@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
   
+  "github.com/google/uuid"
   "github.com/rs/cors"
 	"github.com/bitly/go-simplejson"
 	// "github.com/gorilla/handlers"
@@ -14,7 +15,7 @@ import (
 )
 
 type Book struct {
-	// ID string `json:""`
+	ID string `json:"id,omitempty"`
 	Title       string `json:"title"`
 	Author      string `json:"author"`
 	Description string `json:"description"`
@@ -42,42 +43,42 @@ func helloWorldF(w http.ResponseWriter, r *http.Request) {
 }
 
 func createBookLink(w http.ResponseWriter, r *http.Request) {
-  log.Println("hit da api")
+  w.Header().Set("Content-Type", "application/json")
   // declare new book
   var newBook Book
 
-  // try to decode the request body into the struct. If there's an error, 
-  //  respond to the client with the error message and a 400 status code
-  err := json.NewDecoder(r.Body).Decode(&newBook)
-  if err != nil {
-    http.Error(w, err.Error(), http.StatusBadRequest)
-    return
-  }
-
-  //
-  fmt.Fprintf(w, "Book: %+v", newBook)
+  _ = json.NewDecoder(r.Body).Decode(&newBook)
+  newBook.ID = uuid.New().String()
 
   books = append(books, newBook)
 
-  w.Header().Set("Content-Type", "application/json")
-	payload, err := json.Marshal(newBook)
-  if err != nil {
-    log.Println(err)
-  }
-
-  w.Write(payload)
+  json.NewEncoder(w).Encode(newBook)
 }
 
 func getBooks(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(books)
 }
 
+func getBook(w http.ResponseWriter, r *http.Request) {
+  params := mux.Vars(r)
+  id := params["id"]
+
+  for _, book := range books {
+    if book.ID == id {
+      json.NewEncoder(w).Encode(book)
+    }
+  }
+}
+
 func main() {
-	router := mux.NewRouter()//.StrictSlash(true)
-	router.HandleFunc("/", homeLink)
-	router.HandleFunc("/helloWorld", helloWorldF)
+	router := mux.NewRouter().StrictSlash(true)
+
+	router.HandleFunc("/", homeLink).Methods("GET")
+	router.HandleFunc("/helloWorld", helloWorldF).Methods("GET")
   router.HandleFunc("/create-book", createBookLink).Methods("POST")
-	router.HandleFunc("/get-books", getBooks)
+	router.HandleFunc("/get-books", getBooks).Methods("GET")
+  router.HandleFunc("/get-book/{id}", getBook).Methods("GET")
 
   c := cors.New(cors.Options{
     AllowedOrigins: []string{"http://localhost:5173"},

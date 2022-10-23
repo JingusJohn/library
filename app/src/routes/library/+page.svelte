@@ -3,24 +3,21 @@
 	import NewBook from "../../components/library/home/NewBook.svelte";
 
   interface Book {
+    id?: string,
     title: string,
     author: string,
     description: string
   }
   
   let showNewBook: boolean = false;
-  let msg: string = "";
+  let books: Book[] = [];
 
   onMount(async () => {
-    fetch("http://localhost:8080/helloWorld")
+    fetch("http://localhost:8080/get-books")
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        msg = data.msg;
-      }).catch(error => {
-        console.log(error);
-        return [];
-      });
+        books = data;
+      })
   });
 
 
@@ -36,27 +33,24 @@
   async function handleNewBookMessage(event: any) {
     if (event.detail.bookCreated) {
       showNewBook = false;
-      msg = event.detail.bookData.Title + " created!"
       console.log(event.detail.bookData)
       console.log(JSON.stringify(event.detail.bookData))
-      const res = await fetch("http://localhost:8080/create-book/", {
-        method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: event.detail.bookData.title,
-          author: event.detail.bookData.author,
-          description: event.detail.bookData.description
-        })
-      }).then(response => response.json())
-        .then(data => {
-          console.log(data)
-        })
-
-      // result = JSON.stringify(json)
+      const data = JSON.stringify(event.detail.bookData);
+      const headers = {
+        'Content-Type': "application/json"
+      }
+      const res = await fetch("http://localhost:8080/create-book", {
+        method: "POST",
+        headers,
+        body: data
+      }).then(
+        response => response.json()
+      ).then(data => {
+        console.log(data);
+        let newBook: Book = data;
+        books.push(newBook);
+      })
     }
-
 
   }
 
@@ -79,7 +73,23 @@
 <NewBook on:bookCreation={handleNewBookMessage}/>
 {/if}
 
-<p>{msg}</p>
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Description</th>
+  </tr>
+
+{#each books as b, i}
+  <tr>
+    <td><a href="/library/book/{b.id}">{b.title}</a></td>
+    <td>{b.author}</td>
+    <td>{b.description}</td>
+  </tr>
+{/each}
+
+</table>
+
 
 <style>
   .body {
