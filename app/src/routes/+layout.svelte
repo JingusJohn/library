@@ -9,6 +9,9 @@
     <a href="/">Home</a>
     <a href="/library">Library</a>
     <a href="https://reddit.com">Settings</a>
+    <!-- Check if user is logged in in future -->
+    <a href="/login">Login</a>
+    <a href="/register">Register</a>
   </div>
 </div>
 
