@@ -36,25 +36,25 @@
   }
 </script>
 
-<div class="body">
+<div class="items-center h-screen">
 
   <label>
     Title
-    <input id="title-input" bind:value={title}>
+    <input class="input input-bordered w-full max-w-xs" id="title-input" bind:value={title}>
   </label>
 
   <label>
     Author
-    <input bind:value={author}>
+    <input class="input input-bordered w-full max-w-xs" bind:value={author}>
   </label>
 
   <label>
     Description
-    <input bind:value={description}>
+    <input class="input input-bordered w-full max-w-xs" bind:value={description}>
   </label>
 
 
-  <button disabled='{!validStringAnswers([title, author, description])}' on:click={submit}>Create</button>
+  <button class="btn" disabled='{!validStringAnswers([title, author, description])}' on:click={submit}>Create</button>
 
   <p>{message}</p>
 

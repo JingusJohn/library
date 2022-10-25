@@ -57,12 +57,12 @@
 
 </div>
 
-<h1>My Library</h1>
+<h1 class="text-xl">My Library</h1>
 
 {#if !showNewBook}
-<button on:click={() => handleNewBook("create")}>New Book</button>
+<button class="btn btn-primary btn-xs" on:click={() => handleNewBook("create")}>New Book</button>
 {:else}
-<button on:click={() => handleNewBook("cancel")}>Cancel</button>
+<button class="btn btn-warning btn-xs" on:click={() => handleNewBook("cancel")}>Cancel</button>
 {/if}
 
 {#if showNewBook}

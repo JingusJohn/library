@@ -1,6 +1,7 @@
 <script lang="ts">
-  export let data;
+	export let data;
 </script>
 
-<h1>Welcome, {data?.profile?.name || ''}!</h1>
-
+<div class="flex justify-center items-center h-screen">
+	<h1>Welcome, {data?.profile?.name || ''}!</h1>
+</div>
