@@ -1,3 +1,6 @@
+<script lang="ts">
+  export let data;
+</script>
 
 <div class="appToolbar" id="apptoolbar">
   <div class="titleText">
@@ -9,9 +12,14 @@
     <a href="/">Home</a>
     <a href="/library">Library</a>
     <a href="https://reddit.com">Settings</a>
-    <!-- Check if user is logged in in future -->
+    {#if data?.profile}
+    <form method="POST" action="/logout">
+      <button>Logout</button>
+    </form>
+    {:else}
     <a href="/login">Login</a>
     <a href="/register">Register</a>
+    {/if}
   </div>
 </div>
 

@@ -1,13 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
 	import NewBook from "../../components/library/home/NewBook.svelte";
+  import type { Book } from "../../lib/models/book";
 
-  interface Book {
-    id?: string,
-    title: string,
-    author: string,
-    description: string
-  }
+
+  export let data;
   
   let showNewBook: boolean = false;
   let books: Book[] = [];
@@ -60,8 +57,7 @@
 
 </div>
 
-<h1>The Library</h1>
-<p>Here, you can find every book in my personal library!</p>
+<h1>My Library</h1>
 
 {#if !showNewBook}
 <button on:click={() => handleNewBook("create")}>New Book</button>

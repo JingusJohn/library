@@ -4,7 +4,8 @@
 </script>
 
 
-<form>
-  <input type="text" placeholder="email" id="email" bind:value={email}>
-  <input type="text" placeholder="password" id="password" bind:value={password}>
+<form method="POST" action="?/login">
+  <input name="email" type="text" placeholder="email" id="email" bind:value={email}>
+  <input name="password" type="text" placeholder="password" id="password" bind:value={password}>
+  <button>Login</button>
 </form>
