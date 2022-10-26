@@ -71,6 +71,20 @@ func getBook(w http.ResponseWriter, r *http.Request) {
   }
 }
 
+func getBookCount(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json")
+  json := simplejson.New()
+
+  json.Set("count", len(books))
+  
+  payload, err := json.MarshalJSON()
+  if err != nil {
+    log.Println(err)
+  }
+
+  w.Write(payload)
+}
+
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -79,6 +93,7 @@ func main() {
   router.HandleFunc("/create-book", createBookLink).Methods("POST")
 	router.HandleFunc("/get-books", getBooks).Methods("GET")
   router.HandleFunc("/get-book/{id}", getBook).Methods("GET")
+  router.HandleFunc("/get-book-count", getBookCount).Methods("GET")
 
   c := cors.New(cors.Options{
     AllowedOrigins: []string{"http://localhost:5173"},

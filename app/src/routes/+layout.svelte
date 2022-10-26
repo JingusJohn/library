@@ -1,28 +1,28 @@
 <script lang="ts">
 	import '../lib/app.css';
-	export let data;
+	export let data: any;
 </script>
 
 <title>Emporium</title>
 
 <div id="body bg-zinc-900">
-	<div class="navbar bg-primary rounded" id="apptoolbar">
+	<div class="navbar rounded bg-primary" id="apptoolbar">
 		<div class="navbar-start">
-			<a class="btn btn-ghost text-xl text-white" href="/">The Emporium</a>
+			<a class="btn-ghost btn text-xl text-white" href="/">The Emporium</a>
 		</div>
 
 		<div class="navbar-end">
 			<!-- items for navigating the website. youtube temporarily -->
-			<a class="btn btn-ghost text-white" href="/">Home</a>
-			<a class="btn btn-ghost" href="/library">Library</a>
-			<a class="btn btn-ghost" href="https://reddit.com">Settings</a>
+			<a class="btn-ghost btn text-white" href="/">Home</a>
 			{#if data?.profile}
+				<a class="btn-ghost btn" data-sveltekit-prefetch href="/library">Library</a>
+				<a class="btn-ghost btn" href="https://reddit.com">Settings</a>
 				<form method="POST" action="/logout">
 					<button class="btn">Logout</button>
 				</form>
 			{:else}
-				<a class="btn btn-ghost" href="/login">Login</a>
-				<a class="btn btn-ghost" href="/register">Register</a>
+				<a class="btn-ghost btn" href="/login">Login</a>
+				<a class="btn-ghost btn" href="/register">Register</a>
 			{/if}
 		</div>
 	</div>

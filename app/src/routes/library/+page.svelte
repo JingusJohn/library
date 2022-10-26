@@ -1,95 +1,77 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-	import NewBook from "../../components/library/home/NewBook.svelte";
-  import type { Book } from "../../lib/models/book";
+	import NewBook from '../../components/library/home/NewBook.svelte';
+	import type { Book } from '../../lib/models/book';
 
+	export let data;
 
-  export let data;
-  
-  let showNewBook: boolean = false;
-  let books: Book[] = [];
+	let showNewBook: boolean = false;
+	let { books } = data;
 
-  onMount(async () => {
-    fetch("http://localhost:8080/get-books")
-      .then(response => response.json())
-      .then(data => {
-        books = data;
-      })
-  });
+	// event handlers
+	function handleNewBook(ev: string) {
+		if (ev == 'create') {
+			showNewBook = true;
+		} else if (ev == 'cancel') {
+			showNewBook = false;
+		}
+	}
 
-
-  // event handlers
-  function handleNewBook(ev: string) {
-    if (ev == "create") {
-      showNewBook = true;
-    } else if (ev == "cancel") {
-      showNewBook = false;
-    }
-  }
-
-  async function handleNewBookMessage(event: any) {
-    if (event.detail.bookCreated) {
-      showNewBook = false;
-      console.log(event.detail.bookData)
-      console.log(JSON.stringify(event.detail.bookData))
-      const data = JSON.stringify(event.detail.bookData);
-      const headers = {
-        'Content-Type': "application/json"
-      }
-      const res = await fetch("http://localhost:8080/create-book", {
-        method: "POST",
-        headers,
-        body: data
-      }).then(
-        response => response.json()
-      ).then(data => {
-        console.log(data);
-        let newBook: Book = data;
-        books.push(newBook);
-      })
-    }
-
-  }
-
+	async function handleNewBookMessage(event: any) {
+		if (event.detail.bookCreated) {
+			showNewBook = false;
+			const data = JSON.stringify(event.detail.bookData);
+			const headers = {
+				'Content-Type': 'application/json'
+			};
+			const res = await fetch('http://localhost:8080/create-book', {
+				method: 'POST',
+				headers,
+				body: data
+			})
+				.then((response) => response.json())
+				.then((data) => {
+					console.log(data);
+					let newBook: Book = data;
+					books.push(newBook);
+					books = books;
+				});
+		}
+	}
 </script>
 
-<div id="body" class="body">
+<div class="flex flex-col">
+	<div class="items-center">
+		<h1 class="text-center text-xl">My Library</h1>
 
+		<label for="my-modal" class="modal-button btn">Add Book</label>
+
+		<!-- Put this part before </body> tag -->
+		<input type="checkbox" id="my-modal" class="modal-toggle" bind:checked={showNewBook} />
+		<div class="modal" on:click|self={() => (showNewBook = false)}>
+			<div class="modal-box">
+				<h3 class="text-lg font-bold text-center">Add a book to your library</h3>
+				<NewBook on:bookCreation={handleNewBookMessage} />
+			</div>
+		</div>
+	</div>
+
+	<!-- The button to open modal -->
+
+	<div class="overflow-x-auto">
+		<table class="table w-full">
+			<tr class="bg-base-200">
+				<th>Title</th>
+				<th>Author</th>
+				<th>Description</th>
+			</tr>
+
+			{#each books as b}
+				<tr class="hover">
+					<td><a href="/library/book/{b.id}">{b.title}</a></td>
+					<td>{b.author}</td>
+					<td>{b.description}</td>
+				</tr>
+			{/each}
+		</table>
+	</div>
 </div>
-
-<h1 class="text-xl">My Library</h1>
-
-{#if !showNewBook}
-<button class="btn btn-primary btn-xs" on:click={() => handleNewBook("create")}>New Book</button>
-{:else}
-<button class="btn btn-warning btn-xs" on:click={() => handleNewBook("cancel")}>Cancel</button>
-{/if}
-
-{#if showNewBook}
-<NewBook on:bookCreation={handleNewBookMessage}/>
-{/if}
-
-<table>
-  <tr>
-    <th>Title</th>
-    <th>Author</th>
-    <th>Description</th>
-  </tr>
-
-{#each books as b, i}
-  <tr>
-    <td><a href="/library/book/{b.id}">{b.title}</a></td>
-    <td>{b.author}</td>
-    <td>{b.description}</td>
-  </tr>
-{/each}
-
-</table>
-
-
-<style>
-  .body {
-    display: flex;
-    flex-direction: column;
-  }
-</style>
